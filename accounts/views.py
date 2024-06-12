@@ -1,14 +1,49 @@
+from django.db.models.base import Model as Model
+from django.db.models.query import QuerySet
 from django.shortcuts import render, redirect
 from . import forms
 from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, PasswordChangeView
+from django.views.generic import ListView, UpdateView
 from django.contrib import messages
+from orders.models import Order
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 # Create your views here.
-def profile(request):
-    users = User.objects.all()
-    return render(request, './accounts/profile.html', {"data":users})
+
+@method_decorator(login_required, name='dispatch')
+class ProfileView(ListView):
+    model= Order
+    template_name = './accounts/profile.html'
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        context['orders'] = Order.objects.filter(customer=self.request.user)
+        return context
+
+@method_decorator(login_required, name='dispatch')
+class ProfileUpdateView(UpdateView):
+    form_class = forms.UpdateProfileForm
+    template_name = './accounts/auth.html'
+    success_url = reverse_lazy('profile')
+    
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        context['type'] = 'Update profile'
+        return context
+    
+    def get_object(self, queryset: QuerySet=None):
+        return self.request.user
+    
+    def form_valid(self, form):
+        messages.success(self.request, 'Your profile updated successfully.')
+        return super().form_valid(form)
+    
+@method_decorator(login_required, name='dispatch')
+class PasswordChange(PasswordChangeView):
+    template_name = './accounts/auth.html'
+    success_url = reverse_lazy('profile')
 
 def singup(request):
     if request.method =='POST':

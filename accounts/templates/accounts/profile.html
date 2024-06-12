@@ -1,22 +1,36 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 {% block content %}
-<div class="container">
+
+<h2 class='display-6 my-4 text-center'>{{user.username}} profile section</h2>
+<ul>
+  <a href="{% url "edit_profile" %}" class='btn btn-outline-light'>Edit Profile</a>
+  <a href="{% url "change_password" %}" class='btn btn-outline-dark'>Change password</a>
+</ul>
+
+<hr>
+<div class="container-fluid my-4">
+  <h5 class="text-dark my-3">Your order history</h5>
   <table class="table table-bordered">
     <thead>
       <tr>
-        <th scope="col">Username</th>
-        <th scope="col">First Name</th>
-        <th scope="col">Last Name</th>
-        <th scope="col">Email</th>
+        <th scope="col">Order id</th>
+        <th scope="col">Car's name</th>
+        <th scope="col">Price</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Date</th>
+        <th scope="col">Total amount</th>
       </tr>
     </thead>
     <tbody>
-      {% for user in data %}
+      {% for order in orders %}
       <tr>
-        <td>{{user.username}}</td>
-        <td>{{user.first_name}}</td>
-        <td>{{user.last_name}}</td>
-        <td>{{user.email}}</td>
+        <td>{{order.pk}}</td>
+        <td>{{order.car}}</td>
+        <td>${{order.car.price}}</td>
+        <td>{{order.quantity}}</td>
+        <td>{{order.order_date}}</td>
+        <td>${{order.total}}</td>
       </tr>
       {%endfor%}
     </tbody>
