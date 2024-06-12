@@ -5,22 +5,12 @@ from .models import Order
 from cars.models import Car
 from .forms import OrderForm
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+
 # Create your views here.
-class OrderCreateView(CreateView):
-    model = Order
-    form_class = OrderForm
-    template_name = './orders/order.html'
-    pk_url_kwarg='pk'
 
-    def get_success_url(self) -> str:
-        return reverse_lazy('home')
-
-    def form_valid(self, form):
-        form.instance.customer=self.request.user
-        form.instance.car = self.get_object()
-        return super().form_valid(form)
-
-
+@login_required
 def order_view(request, pk=None):
     try:
         if pk:
@@ -41,7 +31,7 @@ def order_view(request, pk=None):
             'form': form,
             'car': car
         })
-    except:
+    except ValueError:
         messages.warning(request, message='Not enough stock available for the requested car!')
         return render(request, './orders/order.html', {
             'form': form,

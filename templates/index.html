@@ -58,7 +58,7 @@
               <p class="card-text">{{car.describtion | truncatechars:80}}</p>
               <p class="card-text"><strong>Price: ${{car.price}}</strong></p>
               <div class="d-flex justify-content-between">
-                {% if car.quantity != 0 and user.is_authenticated %}
+              {% if car.quantity != 0 %}
                 <a href="{% url "order" car.pk %}" class="btn btn-primary">Buy Now</a>
               {% else %}
                 <a href="#" class="btn btn-info disabled">Buy Now</a>
