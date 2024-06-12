@@ -1,0 +1,23 @@
+{% extends "base.html" %} {% block content %}
+<div class="container-fuild">
+  <div class="card car-card">
+    <img src="{{car.img.url}}" class="card-img-top" alt="Car Image" />
+    <div class="card-body">
+      <h5 class="card-title">Model- {{car.car_model}}</h5>
+      <p class="card-text">{{car.describtion}}</p>
+      <p class="card-text"><strong>Brand: </strong>{{car.brand.brand_name}}</p>
+      <p class="card-text"><strong>Price: ${{car.price}}</strong></p>
+      <div class="d-flex justify-content-between">
+        <div class="btn btn-dark disabled">
+          {% if car.quantity > 0 %}In Stock {% else %} Out Of Stock{% endif %}
+        </div>
+        {% if car.quantity != 0 and user.is_authenticated %}
+        <a href="#" class="btn btn-primary">Buy Now</a>
+        {% else %}
+        <a href="#" class="btn btn-info disabled">Buy Now</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

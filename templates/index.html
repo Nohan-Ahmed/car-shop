@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<!-- Hero 4 - Bootstrap Brain Component -->
+<!-- Hero section start -->
 <section class="bg-primary">
     <div class="container-fluid overflow-hidden">
       <div class="row">
@@ -26,5 +26,52 @@
       </div>
     </div>
   </section>
+  
+<!-- Hero section end -->
+
+  <!-- filter section start -->
+  <div class="container-fluid py-3">
+    <ul class="nav nav-pills">
+      {% for brand in brands %}
+        <li class="nav-item">
+          <a class="nav-link active ms-2 my-2" aria-current="page" href="{% url "brand" brand.slug %}">{{brand.brand_name}}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <!-- filter section end -->
+
+  <!-- car section start -->
+
+  <div class="container-fluid">
+    <div class="row row-cols-1 row-cols-lg-4 g-2">
+      {% for car in cars %}
+        <div class="col"> <!-- Added mb-4 for spacing between cards -->
+          <div class="card car-card">
+            <img src="{{car.img.url}}" class="card-img-top" alt="Car Image">
+            <div class="badge bg-success badge-stock">
+              {% if car.quantity > 0 %}In Stock {% else %} Out Of Stock{% endif %}
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Model- {{car.car_model}}</h5>
+              <p class="card-text"><strong>Brand: </strong>{{car.brand.brand_name}}</p>
+              <p class="card-text">{{car.describtion | truncatechars:80}}</p>
+              <p class="card-text"><strong>Price: ${{car.price}}</strong></p>
+              <div class="d-flex justify-content-between">
+                {% if car.quantity != 0 and user.is_authenticated %}
+                <a href="{% url "order" car.pk %}" class="btn btn-primary">Buy Now</a>
+              {% else %}
+                <a href="#" class="btn btn-info disabled">Buy Now</a>
+                {% endif %}
+                <a href="{% url 'car_details' car.slug car.pk %}" class="btn btn-danger">Details</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>  
+
+  <!-- car section end -->
 {% endblock content %}
 
