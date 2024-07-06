@@ -1,5 +1,6 @@
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from . import forms
 from django.urls import reverse_lazy
@@ -46,12 +47,14 @@ class PasswordChange(PasswordChangeView):
     success_url = reverse_lazy('profile')
 
 def singup(request):
+    if request.user.is_authenticated:
+        return redirect('profile')
     if request.method =='POST':
         form = forms.CreateUser(request.POST)
         if form.is_valid():
             messages.success(request, message="Account created successfully!")
-            form.save(commit=False)
-            return redirect('singup')
+            form.save()
+            return redirect('login')
     else:
         form = forms.CreateUser()
     return render(request, './accounts/auth.html', { 'form':form, 'type':'Sing-up'})
@@ -63,6 +66,11 @@ class UserLoginView(LoginView):
         context = super().get_context_data(**kwargs)
         context['type'] = 'Login'
         return context
+    
+    def get(self, request, *args: str, **kwargs) :
+        if self.request.user.is_authenticated:
+            return redirect('profile')
+        return super().get(request, *args, **kwargs)
     
     def form_valid(self, form):
         messages.success(self.request, message='Logged in Successful!')
